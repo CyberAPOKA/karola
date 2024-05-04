@@ -23,7 +23,7 @@ const submit = () => {
     form.transform(data => ({
         ...data,
         remember: form.remember ? 'on' : '',
-    })).post(route('login'), {
+    })).post(route('admin.auth'), {
         onFinish: () => form.reset('password'),
     });
 };
@@ -43,6 +43,7 @@ const submit = () => {
         </div>
 
         <form @submit.prevent="submit">
+            <h1 class="text-center font-semibold text-gray-700">SISTEMA ADMINISTRATIVO</h1>
             <div>
                 <InputLabel for="email" value="Email" />
                 <TextInput id="email" v-model="form.email" type="email" class="mt-1 block w-full" required autofocus
@@ -57,22 +58,7 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
 
-            <div class="block mt-4">
-                <label class="flex items-center">
-                    <Checkbox v-model:checked="form.remember" name="remember" />
-                    <span class="ms-2 text-sm text-gray-600">Lembrar a senha</span>
-                </label>
-            </div>
-
-            <div class="flex items-center justify-between mt-4">
-                <Link v-if="canResetPassword" :href="route('register')"
-                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                Criar conta
-                </Link>
-                <Link v-if="canResetPassword" :href="route('password.request')"
-                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                Esqueceu sua senha?
-                </Link>
+            <div class="flex items-center justify-end mt-4">
 
                 <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Entrar
