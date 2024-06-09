@@ -20,6 +20,10 @@
         "vue": "^3.3.13"
     },
     "dependencies": {
-        "laravel-precognition-vue-inertia": "^0.5.4"
+        "date-fns": "^3.6.0",
+        "dayjs": "^1.11.11",
+        "laravel-precognition-vue-inertia": "^0.5.4",
+        "maz-ui": "^3.43.3",
+        "moment": "^2.30.1"
     }
 }

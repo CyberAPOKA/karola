@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RaffleController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -28,4 +30,7 @@ Route::middleware([
     })->name('dashboard');
 
     Route::get('/', [HomeController::class, 'home'])->name('home');
+    Route::get('raffle/{id}', [RaffleController::class, 'raffle'])->name('raffle');
 });
+
+Route::get('/raffles', [ApiController::class, 'getRaffles']);
