@@ -14,6 +14,7 @@ class Raffle extends Model
         'title',
         'start',
         'end',
+        'draw_date',
         'price_1_coupon',
         'price_100_coupons',
         'price_250_coupons',

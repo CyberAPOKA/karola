@@ -1,39 +1,30 @@
 <script setup>
 import { ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
+
 const props = defineProps({
     raffles: Array
 })
 
-const number = ref(null);
-
-const sortear = () => {
-    number.value = Math.floor(Math.random() * 10);
-}
 </script>
 
 <template>
 
     <div class="container mx-auto mt-12">
         <div class="mb-6">
-            USER: {{ $page.props.auth.user.name }}
+            USER: {{ $page.props.auth?.user?.name }}
         </div>
-        <div class="grid grid-cols-4 gap-4">
-            <Link v-for="raffle in raffles" :key="raffle.id" class="flex flex-col border p-4"
-                :href="route('raffle', raffle.id)">
-            <h1>{{ raffle.title }}</h1>
-            <h2>{{ raffle.price }}</h2>
-            </Link>
-        </div>
-        <div class="mt-20">
-            <button @click="sortear">
-                Sortear
-            </button>
-            <div>
-                Número sorteado: {{ number }}
-            </div>
-            <div v-if="number === 5">
-                Você ganhou
+        <div class="container px-4 md:mx-auto mb-10">
+            <div class="grid grid-cols-4 gap-4">
+                <div v-for="raffle in raffles" :key="raffle.id">
+                    <Link v-for="raffle in raffles" :key="raffle.id" :href="route('raffle', raffle.id)"
+                        class="flex flex-col gap-2 shadow-lg p-4 rounded-lg">
+                    <img :src="'/storage/' + raffle.image_path" alt="" class="w-full h-80 rounded-md object-cover">
+                    <h1 class="font-medium text-center">
+                        {{ raffle.title }}
+                    </h1>
+                    </Link>
+                </div>
             </div>
         </div>
     </div>

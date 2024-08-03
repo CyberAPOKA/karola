@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\RaffleController;
+use App\Http\Controllers\Admin\RaffleController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests as Precognition;
 
 Route::namespace('admin')->prefix('admin')->group(function () {
@@ -22,8 +22,6 @@ Route::namespace('admin')->prefix('admin')->group(function () {
         Route::post('/atualizar-rifa/{id}', [RaffleController::class, 'update'])->name('update.raffle')->middleware(Precognition::class);
 
         Route::get('/rifa/{id}', [RaffleController::class, 'raffle'])->name('admin.raffle');
-
-
 
         // apis
         Route::get('get-raffles', [ApiController::class, 'getRaffles']);

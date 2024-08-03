@@ -11,18 +11,22 @@ import TitleForm from '@/Components/TitleForm.vue';
 import InputError from '@/Components/InputError.vue';
 import MazTextarea from 'maz-ui/components/MazTextarea';
 import UploadFile from "@/Pages/Admin/Svgs/UploadFile.vue";
+import Toast from 'primevue/toast';
+import { useToast } from "primevue/usetoast";
+const toast = useToast();
 
 const form = useForm('post', route('store.raffle'), {
     title: '',
     start: null,
     end: null,
-    price_1_coupon: null,
-    price_100_coupons: null,
-    price_250_coupons: null,
-    price_500_coupons: null,
-    price_1000_coupons: null,
-    price_5000_coupons: null,
-    price_10000_coupons: null,
+    draw_date: null,
+    price_1_coupon: 0,
+    price_100_coupons: 0,
+    price_250_coupons: 0,
+    price_500_coupons: 0,
+    price_1000_coupons: 0,
+    price_5000_coupons: 0,
+    price_10000_coupons: 0,
     description: '',
     photo: null,
 });
@@ -47,7 +51,12 @@ const submit = () => form.submit({
     onSuccess: () => {
         form.reset();
         imageUrl.value = null;
+        toast.add({ severity: 'success', summary: 'Sucesso!', detail: 'Rifa criada com Sucesso.', life: 10000 });
     },
+    onError: (error) => {
+        console.log('erro', error)
+        toast.add({ severity: 'error', summary: 'Ocorreu um erro!', detail: 'Verifique os campos e tente novamente.', life: 10000 });
+    }
 });
 
 const validateStart = () => {
@@ -56,22 +65,30 @@ const validateStart = () => {
 };
 
 const validateEnd = () => {
+    form.validate('start');
     form.validate('end');
+    form.validate('draw_date');
 };
 
+const validateDrawDate = () => {
+    form.validate('end');
+    form.validate('draw_date');
+}
+
 const setPrices = () => {
-    form.price_1_coupon = 0.50
-    form.price_100_coupons = 0.50
-    form.price_250_coupons = 0.50
-    form.price_500_coupons = 0.50
-    form.price_1000_coupons = 0.50
-    form.price_5000_coupons = 0.50
-    form.price_10000_coupons = 0.50
+    form.price_1_coupon = 0.07
+    form.price_100_coupons = 0.06
+    form.price_250_coupons = 0.05
+    form.price_500_coupons = 0.04
+    form.price_1000_coupons = 0.03
+    form.price_5000_coupons = 0.02
+    form.price_10000_coupons = 0.01
 }
 </script>
 
 <template>
     <Sidebar />
+    <Toast />
     <div class="sm:ml-16 mb-10">
         <Header label="Criar Rifa" />
         <div class="container px-4 md:mx-auto">
@@ -85,16 +102,19 @@ const setPrices = () => {
                     </div>
                     <TitleForm label="Datas" class="lg:col-span-2" />
                     <div>
-                        <MazPicker v-model="form.start" format="DD-MM-YYYY HH:mm"
-                            label="Selecione a data de início da rifa" time @update:model-value="validateStart"
-                            class="w-full" :class="{ 'border !border-red-500 rounded-xl': form.errors.start }" />
+                        <MazPicker v-model="form.start" format="DD-MM-YYYY HH:mm" label="Data de início da rifa" time
+                            @update:model-value="validateStart" class="w-full" :error="form.invalid('start')" />
                         <InputError v-if="form.invalid('start')" :message="form.errors.start" />
                     </div>
                     <div>
-                        <MazPicker v-model="form.end" format="DD-MM-YYYY HH:mm"
-                            label="Selecione a data de término da rifa" time @update:model-value="validateEnd"
-                            class="w-full" :class="{ 'border !border-red-500 rounded-xl': form.errors.end }" />
+                        <MazPicker v-model="form.end" format="DD-MM-YYYY HH:mm" label="Data de término da rifa" time
+                            @update:model-value="validateEnd" class="w-full" :error="form.invalid('end')" />
                         <InputError v-if="form.invalid('end')" :message="form.errors.end" />
+                    </div>
+                    <div>
+                        <MazPicker v-model="form.draw_date" format="DD-MM-YYYY" label="Data de sorteio da rifa"
+                            @update:model-value="validateDrawDate" class="w-full" :error="form.invalid('draw_date')" />
+                        <InputError v-if="form.invalid('draw_date')" :message="form.errors.draw_date" />
                     </div>
                 </div>
                 <TitleForm label="Preços" class="my-4" />
@@ -104,35 +124,35 @@ const setPrices = () => {
                     <div>
                         <MazInputPrice v-model="form.price_1_coupon" label="Preço por cupom" currency="BRL"
                             locale="pt-BR" :min="0" :max="100" @formatted="formattedPrice = $event"
-                            @change="form.validate('price_1_coupon')" class="w-full" />
+                            @update:modelValue="form.validate('price_1_coupon')" class="w-full" />
                         <InputError v-if="form.invalid('price_1_coupon')" :message="form.errors.price_1_coupon" />
                     </div>
 
                     <div>
                         <MazInputPrice v-model="form.price_100_coupons" label="Preço 100 cupons" currency="BRL"
                             locale="pt-BR" :min="0" :max="100" @formatted="formattedPrice = $event"
-                            @change="form.validate('price_100_coupons')" class="w-full" />
+                            @update:modelValue="form.validate('price_100_coupons')" class="w-full" />
                         <InputError v-if="form.invalid('price_100_coupons')" :message="form.errors.price_100_coupons" />
                     </div>
 
                     <div>
                         <MazInputPrice v-model="form.price_250_coupons" label="Preço 250 cupons" currency="BRL"
                             locale="pt-BR" :min="0" :max="100" @formatted="formattedPrice = $event"
-                            @change="form.validate('price_250_coupons')" class="w-full" />
+                            @update:modelValue="form.validate('price_250_coupons')" class="w-full" />
                         <InputError v-if="form.invalid('price_250_coupons')" :message="form.errors.price_250_coupons" />
                     </div>
 
                     <div>
                         <MazInputPrice v-model="form.price_500_coupons" label="Preço 500 cupons" currency="BRL"
                             locale="pt-BR" :min="0" :max="100" @formatted="formattedPrice = $event"
-                            @change="form.validate('price_500_coupons')" class="w-full" />
+                            @update:modelValue="form.validate('price_500_coupons')" class="w-full" />
                         <InputError v-if="form.invalid('price_500_coupons')" :message="form.errors.price_500_coupons" />
                     </div>
 
                     <div>
                         <MazInputPrice v-model="form.price_1000_coupons" label="Preço 1.000 cupons" currency="BRL"
                             locale="pt-BR" :min="0" :max="100" @formatted="formattedPrice = $event"
-                            @change="form.validate('price_1000_coupons')" class="w-full" />
+                            @update:modelValue="form.validate('price_1000_coupons')" class="w-full" />
                         <InputError v-if="form.invalid('price_1000_coupons')"
                             :message="form.errors.price_1000_coupons" />
                     </div>
@@ -140,7 +160,7 @@ const setPrices = () => {
                     <div>
                         <MazInputPrice v-model="form.price_5000_coupons" label="Preço 5.000 cupons" currency="BRL"
                             locale="pt-BR" :min="0" :max="100" @formatted="formattedPrice = $event"
-                            @change="form.validate('price_5000_coupons')" class="w-full" />
+                            @update:modelValue="form.validate('price_5000_coupons')" class="w-full" />
                         <InputError v-if="form.invalid('price_5000_coupons')"
                             :message="form.errors.price_5000_coupons" />
                     </div>
@@ -148,7 +168,7 @@ const setPrices = () => {
                     <div>
                         <MazInputPrice v-model="form.price_10000_coupons" label="Preço 10.000 cupons" currency="BRL"
                             locale="pt-BR" :min="0" :max="100" @formatted="formattedPrice = $event"
-                            @change="form.validate('price_10000_coupons')" class="w-full" />
+                            @update:modelValue="form.validate('price_10000_coupons')" class="w-full" />
                         <InputError v-if="form.invalid('price_10000_coupons')"
                             :message="form.errors.price_10000_coupons" />
                     </div>
@@ -183,7 +203,7 @@ const setPrices = () => {
                     </div>
                 </div>
                 <div class="w-full flex justify-end mt-4">
-                    <MazBtn class="w-full lg:w-40" type="submit">CRIAR RIFA</MazBtn>
+                    <MazBtn class="w-full lg:w-40" type="submit" :disabled="form.processing">CRIAR RIFA</MazBtn>
                 </div>
             </form>
         </div>

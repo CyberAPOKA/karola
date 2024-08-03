@@ -19,10 +19,18 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input): User
     {
+        // dd($input);
+        $input['birth_date'] = \Carbon\Carbon::parse($input['birth_date'])->format('Y-m-d');
+        $input['cpf'] = preg_replace('/\D/', '', $input['cpf']);
+
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
+            'phone' => ['required', 'string', 'regex:/^\(\d{2}\) \d{1} \d{4}-\d{4}$/'],
+            'confirm_phone' => ['required', 'string', 'same:phone'],
+            'birth_date' => ['required', 'date', 'before:today'],
+            'cpf' => ['required', 'string', 'size:11', 'unique:users'],
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
         ])->validate();
 
@@ -30,6 +38,9 @@ class CreateNewUser implements CreatesNewUsers
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
+            'phone' => $input['phone'],
+            'birth_date' => $input['birth_date'],
+            'cpf' => $input['cpf'],
         ]);
     }
 }

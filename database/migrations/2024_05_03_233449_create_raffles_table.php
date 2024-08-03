@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('title')->nullable();
             $table->dateTime('start')->nullable();
             $table->dateTime('end')->nullable();
+            $table->date('draw_date')->nullable();
             $table->decimal('price_1_coupon', 8, 2)->nullable();
             $table->decimal('price_100_coupons', 8, 2)->nullable();
             $table->decimal('price_250_coupons', 8, 2)->nullable();
